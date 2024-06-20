@@ -1,0 +1,44 @@
+.app {
+  margin: 0 auto;
+  width: 50%;
+  /* border: 1px solid black; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.balance {
+  width: 60%;
+  /* border: 1px solid black; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.display {
+  width: 60%;
+  /* border: 1px solid black; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.addTransaction {
+  width: 60%;
+  /* border: 1px solid black; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.formElement{
+    /* margin: 0.5rem 0; */
+    padding: 0.5rem 0;
+    width: 95%;
+    /* border: 1px solid black; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.formElement > input{
+    margin: 0 auto;
+    padding: 0.2rem 2.5rem;
+}
