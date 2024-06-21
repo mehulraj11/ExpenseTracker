@@ -1,12 +1,13 @@
 import { useState } from "react";
 import "./App.css";
+import Transactions from "./Transactions";
 
 export default function App() {
   const [add, setAdd] = useState(true);
   const [details, setDetails] = useState({
     amount: "",
     description: "",
-    type: "", 
+    type: "",
   });
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
@@ -49,6 +50,18 @@ export default function App() {
     });
   };
 
+  const renderTransaction = transactions.map((item, index) => {
+    return (
+      <Transactions
+        item={item}
+        key={index}
+        index={index}
+        description={item.description}
+        amount={item.amount}
+        type={item.type}
+      />
+    );
+  });
   return (
     <div className="app">
       <div className="heading">
@@ -111,17 +124,6 @@ export default function App() {
       )}
 
       <div className="display">
-        <div className="transactions">
-          <h4>Transactions</h4>
-          <ul>
-            {transactions.map((transaction, index) => (
-              <li key={index}>
-                <span>{transaction.description}</span> -
-                <span>Rs. {transaction.amount}</span>({transaction.type})
-              </li>
-            ))}
-          </ul>
-        </div>
         <div className="expense">
           <div className="displayExpense">Expense</div>
           <div className="displayMoney">
@@ -134,6 +136,10 @@ export default function App() {
             Rs.<span style={{ color: "green" }}>{income}</span>
           </div>
         </div>
+      </div>
+      <div className="transactions">
+        <h4>Transactions</h4>
+        {renderTransaction}
       </div>
     </div>
   );

@@ -16,7 +16,7 @@
 }
 .display {
   width: 60%;
-  /* border: 1px solid black; */
+  border: 1px solid black;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -41,4 +41,17 @@
 .formElement > input{
     margin: 0 auto;
     padding: 0.2rem 2.5rem;
+}
+.transactions{
+  border: 1px solid red;
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.transactionsList{
+  border: 1px solid green;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
 }

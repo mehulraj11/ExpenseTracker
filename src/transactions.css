@@ -1,0 +1,28 @@
+.transactionBox{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    border: 1px solid red;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.expense{
+    color: red;
+}
+.income{
+    color: green;
+}
+.modificationBox{
+    width: 200px;
+    border: 1px solid brown;
+    display: flex;
+    /* justify-content: space-around; */
+    align-items: center;
+}
+.modificationBox > p{
+    margin-right: 1rem;
+}
+.btnBox{
+    border: 1px solid green;
+}
