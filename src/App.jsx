@@ -50,18 +50,61 @@ export default function App() {
     });
   };
 
-  const renderTransaction = transactions.map((item, index) => {
-    return (
-      <Transactions
-        item={item}
-        key={index}
-        index={index}
-        description={item.description}
-        amount={item.amount}
-        type={item.type}
-      />
+  const handleDeleteTransaction = (index) => {
+    const transaction = transactions[index];
+    const amount = parseFloat(transaction.amount);
+    if (transaction.type === "expense") {
+      setBalance((prevBalance) => prevBalance + amount);
+      setExpense((prevExpense) => prevExpense - amount);
+    } else if (transaction.type === "income") {
+      setBalance((prevBalance) => prevBalance - amount);
+      setIncome((prevIncome) => prevIncome - amount);
+    }
+    setTransactions(
+      transactions.filter((_, filterIndex) => filterIndex !== index)
     );
-  });
+  };
+
+  const handleEditTransaction = (index, updatedTransaction) => {
+    const newTransactions = [...transactions];
+    const oldTransaction = newTransactions[index];
+    const amountDifference =
+      parseFloat(updatedTransaction.amount) - parseFloat(oldTransaction.amount);
+
+    if (oldTransaction.type === "expense") {
+      setBalance(
+        (prevBalance) => prevBalance + parseFloat(oldTransaction.amount)
+      );
+      setExpense(
+        (prevExpense) => prevExpense - parseFloat(oldTransaction.amount)
+      );
+    } else {
+      setBalance(
+        (prevBalance) => prevBalance - parseFloat(oldTransaction.amount)
+      );
+      setIncome((prevIncome) => prevIncome - parseFloat(oldTransaction.amount));
+    }
+
+    if (updatedTransaction.type === "expense") {
+      setBalance(
+        (prevBalance) => prevBalance - parseFloat(updatedTransaction.amount)
+      );
+      setExpense(
+        (prevExpense) => prevExpense + parseFloat(updatedTransaction.amount)
+      );
+    } else {
+      setBalance(
+        (prevBalance) => prevBalance + parseFloat(updatedTransaction.amount)
+      );
+      setIncome(
+        (prevIncome) => prevIncome + parseFloat(updatedTransaction.amount)
+      );
+    }
+    console.log(transactions);
+    newTransactions[index] = updatedTransaction;
+    setTransactions(newTransactions);
+  };
+
   return (
     <div className="app">
       <div className="heading">
@@ -99,7 +142,7 @@ export default function App() {
               name="description"
             />
           </div>
-          <div className="">
+          <div>
             <label>
               <input
                 type="radio"
@@ -139,7 +182,15 @@ export default function App() {
       </div>
       <div className="transactions">
         <h4>Transactions</h4>
-        {renderTransaction}
+        {transactions.map((item, index) => (
+          <Transactions
+            key={index}
+            index={index}
+            item={item}
+            handleDeleteTransaction={handleDeleteTransaction}
+            handleEditTransaction={handleEditTransaction}
+          />
+        ))}
       </div>
     </div>
   );

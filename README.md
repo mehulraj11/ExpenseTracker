@@ -4,14 +4,20 @@
 
 ### render each transaction as component
 
+### delete transaction
+
+### edit transaction
+
 # left out
 
-### edit and delete transaction option
+### search description
 
 ### monthly total expense
 
 ### sort on the basis of expense and income
 
-### search description
-
 ### sort on the basis of date/type/amount
+
+# BUG
+
+### on deleting the income we are getting wrong result

@@ -1,96 +1,107 @@
 import { useState } from "react";
 import "./transactions.css";
+
 export default function Transactions({
-  item,
   index,
-  description,
-  amount,
-  type,
+  item,
+  handleDeleteTransaction,
+  handleEditTransaction,
 }) {
-  const [btnBox, setBtnBox] = useState(false);
+  const editTransaction = {
+    positon: "absolute",
+  };
   const [editClick, setEditClick] = useState(false);
-  const editDialouge = {
-    position: "absolute",
-    backgroundColor: "white",
+  const [updatedDetails, setUpdatedDetails] = useState({
+    amount: item.amount,
+    description: item.description,
+    type: item.type,
+  });
+
+  const handleChangeInDetailsEdit = (e) => {
+    const { name, value } = e.target;
+    setUpdatedDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
   };
-  const handleModificationBoxClick = () => {
-    setBtnBox(!btnBox);
+
+  const handleSave = () => {
+    handleEditTransaction(index, updatedDetails);
+    setEditClick(false);
   };
-  const handleEditClick = () => {
-    setEditClick(true);
-  };
-  const handleDelete = () => {
-    item.filter((item, Filterindex) => Filterindex !== index);
-  };
+
   return (
-    <div
-      key={index}
-      className="transactionBox"
-      title="Click to Modify Details"
-      onClick={handleModificationBoxClick}
-    >
-      <p>{description}</p>
-      <div className="modificationBox">
-        <p>
-          Rs.
-          <span className={type}>
-            {type === "expense" ? "-" : "+"}
-            {amount}
-          </span>
-        </p>
-        {btnBox && (
+    <>
+      <div
+        key={index}
+        className="transactionBox"
+        title="Click to Modify Details"
+      >
+        <p>{item.description}</p>
+        <div className="modificationBox">
+          <p>
+            Rs.
+            <span className={item.type}>
+              {item.type === "expense" ? "-" : "+"}
+              {item.amount}
+            </span>
+          </p>
           <div className="btnBox">
-            <button onClick={handleEditClick}>edit</button>
-            <button onClick={handleDelete}>delete</button>
+            <button onClick={() => setEditClick(true)}>Edit</button>
+            <button onClick={() => handleDeleteTransaction(index)}>
+              Delete
+            </button>
+          </div>
+        </div>
+        {editClick && (
+          <div className={editTransaction}>
+            <div className="addTransaction">
+              <div className="formElement">
+                <input
+                  type="number"
+                  placeholder="Amount"
+                  value={updatedDetails.amount}
+                  onChange={handleChangeInDetailsEdit}
+                  name="amount"
+                />
+              </div>
+              <div className="formElement">
+                <input
+                  type="text"
+                  placeholder="Description"
+                  value={updatedDetails.description}
+                  onChange={handleChangeInDetailsEdit}
+                  name="description"
+                />
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="radio"
+                    value="expense"
+                    checked={updatedDetails.type === "expense"}
+                    onChange={handleChangeInDetailsEdit}
+                    name="type"
+                  />
+                  Expense
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="income"
+                    checked={updatedDetails.type === "income"}
+                    onChange={handleChangeInDetailsEdit}
+                    name="type"
+                  />
+                  Income
+                </label>
+              </div>
+              <button onClick={handleSave}>Save</button>
+              <button onClick={() => setEditClick(false)}>Cancel</button>
+            </div>
           </div>
         )}
       </div>
-      {editClick && (
-        <div style={editDialouge}>
-          <div className="addTransaction">
-            <div className="formElement">
-              <input
-                type="number"
-                placeholder="Amount"
-                //   value={details.amount}
-                //   onChange={handleChangeInDetails}
-                name="amount"
-              />
-            </div>
-            <div className="formElement">
-              <input
-                type="text"
-                placeholder="Description"
-                //   value={details.description}
-                //   onChange={handleChangeInDetails}
-                name="description"
-              />
-            </div>
-            <div className="">
-              <label>
-                <input
-                  type="radio"
-                  // value="expense"
-                  // checked={details.type === "expense"}
-                  // onChange={handleTransactionTypeChange}
-                />
-                Expense
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  // value="income"
-                  // checked={details.type === "income"}
-                  // onChange={handleTransactionTypeChange}
-                />
-                Income
-              </label>
-            </div>
-            <button>Save</button>
-            <button onClick={() => setEditClick(false)}>Cancel</button>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 }
