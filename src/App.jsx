@@ -1,9 +1,10 @@
 import { useState } from "react";
 import "./App.css";
 import Transactions from "./Transactions";
-
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 export default function App() {
-  const [add, setAdd] = useState(true);
+  const [add, setAdd] = useState(false);
   const [details, setDetails] = useState({
     amount: "",
     description: "",
@@ -13,6 +14,7 @@ export default function App() {
   const [balance, setBalance] = useState(0);
   const [income, setIncome] = useState(0);
   const [expense, setExpense] = useState(0);
+  const [selectedOption, setSelectedOption] = useState("");
 
   const handleAddClick = () => {
     setAdd(!add);
@@ -67,44 +69,88 @@ export default function App() {
 
   const handleEditTransaction = (index, updatedTransaction) => {
     const newTransactions = [...transactions];
-    const oldTransaction = newTransactions[index];
     const amountDifference =
-      parseFloat(updatedTransaction.amount) - parseFloat(oldTransaction.amount);
+      parseFloat(updatedTransaction.amount) -
+      parseFloat(newTransactions[index].amount);
 
-    if (oldTransaction.type === "expense") {
+    if (
+      updatedTransaction.type === "income" &&
+      newTransactions[index].type === "income"
+    ) {
+      setIncome((prevState) => prevState + amountDifference);
+      setBalance((prevState) => prevState + amountDifference);
+    } else if (
+      updatedTransaction.type === "expense" &&
+      newTransactions[index].type === "income"
+    ) {
+      setIncome(
+        (prevState) => prevState - parseFloat(updatedTransaction.amount)
+      );
       setBalance(
-        (prevBalance) => prevBalance + parseFloat(oldTransaction.amount)
+        (prevState) => prevState - parseFloat(updatedTransaction.amount * 2)
       );
       setExpense(
-        (prevExpense) => prevExpense - parseFloat(oldTransaction.amount)
+        (prevState) => prevState - parseFloat(updatedTransaction.amount)
       );
-    } else {
+    } else if (
+      updatedTransaction.type === "expense" &&
+      newTransactions[index].type === "expense"
+    ) {
+      setExpense((prevState) => prevState + amountDifference);
+      setBalance((prevState) => prevState - amountDifference);
+    } else if (
+      updatedTransaction.type === "income" &&
+      newTransactions[index].type === "expense"
+    ) {
       setBalance(
-        (prevBalance) => prevBalance - parseFloat(oldTransaction.amount)
-      );
-      setIncome((prevIncome) => prevIncome - parseFloat(oldTransaction.amount));
-    }
-
-    if (updatedTransaction.type === "expense") {
-      setBalance(
-        (prevBalance) => prevBalance - parseFloat(updatedTransaction.amount)
-      );
-      setExpense(
-        (prevExpense) => prevExpense + parseFloat(updatedTransaction.amount)
-      );
-    } else {
-      setBalance(
-        (prevBalance) => prevBalance + parseFloat(updatedTransaction.amount)
+        (prevState) => prevState + parseFloat(updatedTransaction.amount * 2)
       );
       setIncome(
-        (prevIncome) => prevIncome + parseFloat(updatedTransaction.amount)
+        (prevState) => prevState + parseFloat(updatedTransaction.amount)
+      );
+      setExpense(
+        (prevState) => prevState - parseFloat(updatedTransaction.amount)
       );
     }
-    console.log(transactions);
     newTransactions[index] = updatedTransaction;
     setTransactions(newTransactions);
   };
 
+  const handleSelectChange = (e) => {
+    setSelectedOption(e.target.value);
+  };
+
+  // Filter and sort transactions based on selected option
+  const filteredTransactions = transactions
+    .filter((transaction) => {
+      if (selectedOption === "expense") return transaction.type === "expense";
+      if (selectedOption === "income") return transaction.type === "income";
+      return true;
+    })
+    .sort((a, b) => {
+      if (selectedOption === "highestAmount") {
+        return b.amount - a.amount;
+      }
+    });
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.text("Transaction List", 20, 10);
+    const tableColumn = ["Description", "Amount", "Type"];
+    const tableRows = [];
+
+    filteredTransactions.forEach((transaction) => {
+      const transactionData = [
+        transaction.description,
+        transaction.amount,
+        transaction.type,
+      ];
+      tableRows.push(transactionData);
+    });
+
+    doc.autoTable(tableColumn, tableRows, { startY: 20 });
+    doc.save("transactions.pdf");
+  };
+  console.log(filteredTransactions);
   return (
     <div className="app">
       <div className="heading">
@@ -173,6 +219,19 @@ export default function App() {
             Rs.<span style={{ color: "red" }}>{-expense}</span>
           </div>
         </div>
+        <div className="sortOnType">
+          <select
+            name="options"
+            id="options"
+            value={selectedOption}
+            onChange={handleSelectChange}
+          >
+            <option value="">All</option>
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+            <option value="highestAmount">Highest Amount</option>
+          </select>
+        </div>
         <div className="income">
           <div className="displayExpense">Income</div>
           <div className="displayMoney">
@@ -182,7 +241,7 @@ export default function App() {
       </div>
       <div className="transactions">
         <h4>Transactions</h4>
-        {transactions.map((item, index) => (
+        {filteredTransactions.map((item, index) => (
           <Transactions
             key={index}
             index={index}
@@ -192,6 +251,7 @@ export default function App() {
           />
         ))}
       </div>
+      <button onClick={generatePDF}>Download as PDF</button>
     </div>
   );
 }

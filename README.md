@@ -8,16 +8,10 @@
 
 ### edit transaction
 
-# left out
-
-### search description
-
-### monthly total expense
+### sort on the basis of amount
 
 ### sort on the basis of expense and income
 
-### sort on the basis of date/type/amount
+# left out
 
-# BUG
-
-### on deleting the income we are getting wrong result
+### search description
